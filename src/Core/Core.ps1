@@ -4,7 +4,7 @@
 
 if (-not $global:KB) {
     $global:KB = [hashtable]::Synchronized(@{
-        Versao     = '0.1.0'
+        Versao     = '1.0.1'
         Raiz       = Join-Path $env:ProgramData 'K-Bench'
         LogFile    = $null
         LogSink    = $null      # ConcurrentQueue quando a GUI está ativa

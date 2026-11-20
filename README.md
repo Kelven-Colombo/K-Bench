@@ -11,6 +11,11 @@ Em um PowerShell (o K-Bench pede administrador sozinho):
 irm https://raw.githubusercontent.com/Kelven-Colombo/K-Bench/main/install.ps1 | iex
 ```
 
+Ou baixe o **[K-Bench.exe](https://github.com/Kelven-Colombo/K-Bench/releases/latest/download/K-Bench.exe)**
+(bom pra levar no pendrive). Ele abre como administrador, pega a versão mais nova do GitHub e, sem internet,
+usa a cópia que vem dentro dele (`K-Bench.exe -Offline` força isso). Não é assinado: na primeira vez o Windows
+mostra "o Windows protegeu o computador" → *Mais informações* → *Executar assim mesmo*.
+
 Ou, com o código local:
 
 ```powershell

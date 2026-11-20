@@ -1,0 +1,1045 @@
+﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="K-Bench" Width="1200" Height="800" MinWidth="980" MinHeight="620"
+        WindowStartupLocation="CenterScreen" Background="#1E1E20"
+        FontFamily="Segoe UI Variable Text, Segoe UI" FontSize="14.5" Foreground="#F5F5F7"
+        TextOptions.TextFormattingMode="Display" UseLayoutRounding="True">
+  <Window.Resources>
+    <!-- Paleta (escuro, inspirada no macOS) -->
+    <SolidColorBrush x:Key="Fundo" Color="#1E1E20"/>
+    <SolidColorBrush x:Key="Lateral" Color="#252528"/>
+    <SolidColorBrush x:Key="FundoCartao" Color="#2C2C2F"/>
+    <SolidColorBrush x:Key="Elevado" Color="#3A3A3D"/>
+    <SolidColorBrush x:Key="Linha" Color="#38383B"/>
+    <SolidColorBrush x:Key="Texto" Color="#F5F5F7"/>
+    <SolidColorBrush x:Key="Texto2" Color="#9A9AA0"/>
+    <SolidColorBrush x:Key="Texto3" Color="#6C6C72"/>
+    <SolidColorBrush x:Key="Acento" Color="#0A84FF"/>
+    <SolidColorBrush x:Key="Verde" Color="#30D158"/>
+    <SolidColorBrush x:Key="Laranja" Color="#FF9F0A"/>
+    <SolidColorBrush x:Key="Vermelho" Color="#FF453A"/>
+    <SolidColorBrush x:Key="Hover" Color="#303034"/>
+    <FontFamily x:Key="Icones">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
+
+    <!-- Tipografia -->
+    <Style x:Key="TituloPagina" TargetType="TextBlock">
+      <Setter Property="Foreground" Value="{StaticResource Texto}"/>
+      <Setter Property="FontSize" Value="28"/>
+      <Setter Property="FontWeight" Value="Bold"/>
+    </Style>
+    <Style x:Key="SubPagina" TargetType="TextBlock">
+      <Setter Property="Foreground" Value="{StaticResource Texto2}"/>
+      <Setter Property="Margin" Value="0,2,0,0"/>
+      <Setter Property="TextWrapping" Value="Wrap"/>
+    </Style>
+    <Style x:Key="Secao" TargetType="TextBlock">
+      <Setter Property="Foreground" Value="{StaticResource Texto2}"/>
+      <Setter Property="FontSize" Value="12"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="Margin" Value="6,0,0,6"/>
+    </Style>
+    <Style x:Key="Cartao" TargetType="Border">
+      <Setter Property="Background" Value="{StaticResource FundoCartao}"/>
+      <Setter Property="CornerRadius" Value="12"/>
+      <Setter Property="BorderBrush" Value="#333336"/>
+      <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+
+    <!-- Botões -->
+    <Style TargetType="Button">
+      <Setter Property="Background" Value="{StaticResource Acento}"/>
+      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="Padding" Value="16,8"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="b" Background="{TemplateBinding Background}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="b" Property="Opacity" Value="0.85"/></Trigger>
+              <Trigger Property="IsPressed" Value="True"><Setter TargetName="b" Property="Opacity" Value="0.7"/></Trigger>
+              <Trigger Property="IsEnabled" Value="False"><Setter TargetName="b" Property="Opacity" Value="0.35"/></Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <Style x:Key="BtnSec" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+      <Setter Property="Background" Value="{StaticResource Elevado}"/>
+      <Setter Property="Foreground" Value="{StaticResource Texto}"/>
+      <Setter Property="FontWeight" Value="Normal"/>
+    </Style>
+
+    <Style x:Key="BtnMini" TargetType="Button" BasedOn="{StaticResource BtnSec}">
+      <Setter Property="Padding" Value="11,5"/>
+      <Setter Property="Margin" Value="6,0,0,0"/>
+      <Setter Property="Background" Value="#3A3A3E"/>
+    </Style>
+
+    <!-- Navegação lateral -->
+    <Style x:Key="Nav" TargetType="RadioButton">
+      <Setter Property="Foreground" Value="{StaticResource Texto}"/>
+      <Setter Property="GroupName" Value="Nav"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="RadioButton">
+            <Border x:Name="bd" CornerRadius="8" Padding="10,8" Margin="0,1" Background="Transparent">
+              <StackPanel Orientation="Horizontal">
+                <TextBlock x:Name="ic" Text="{TemplateBinding Tag}" FontFamily="{StaticResource Icones}" FontSize="16.5"
+                           Foreground="{StaticResource Texto2}" VerticalAlignment="Center" Width="26"/>
+                <ContentPresenter VerticalAlignment="Center"/>
+              </StackPanel>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="bd" Property="Background" Value="#2F2F33"/></Trigger>
+              <Trigger Property="IsChecked" Value="True">
+                <Setter TargetName="bd" Property="Background" Value="#3A3A3E"/>
+                <Setter TargetName="ic" Property="Foreground" Value="{StaticResource Acento}"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <!-- Controle segmentado -->
+    <Style x:Key="Segmento" TargetType="RadioButton">
+      <Setter Property="Foreground" Value="{StaticResource Texto}"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="RadioButton">
+            <Border x:Name="bd" CornerRadius="7" Padding="16,6" Background="Transparent">
+              <ContentPresenter HorizontalAlignment="Center"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="bd" Property="Background" Value="#3A3A3E"/></Trigger>
+              <Trigger Property="IsChecked" Value="True"><Setter TargetName="bd" Property="Background" Value="#5A5A5F"/></Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <!-- Interruptor (CheckBox) -->
+    <Style TargetType="CheckBox">
+      <Setter Property="Foreground" Value="{StaticResource Texto}"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Padding" Value="0"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="CheckBox">
+            <Border Background="{TemplateBinding Background}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+            <Grid Background="Transparent">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+              </Grid.ColumnDefinitions>
+              <ContentPresenter VerticalAlignment="Center" Margin="0,0,16,0"/>
+              <Border x:Name="trilho" Grid.Column="1" Width="42" Height="25" CornerRadius="12.5" Background="#48484C" VerticalAlignment="Center">
+                <Ellipse x:Name="bola" Width="21" Height="21" Fill="White" HorizontalAlignment="Left" Margin="2,0">
+                  <Ellipse.Effect><DropShadowEffect BlurRadius="4" ShadowDepth="1" Opacity="0.35"/></Ellipse.Effect>
+                </Ellipse>
+              </Border>
+            </Grid>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsChecked" Value="True">
+                <Setter TargetName="trilho" Property="Background" Value="{StaticResource Acento}"/>
+                <Setter TargetName="bola" Property="HorizontalAlignment" Value="Right"/>
+              </Trigger>
+              <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.4"/></Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <!-- Linha de lista: interruptor com a linha inteira clicável e destacada no hover -->
+    <Style x:Key="LinhaLista" TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+      <Setter Property="Padding" Value="10,10"/>
+      <Setter Property="Margin" Value="-10,2"/>
+      <Style.Triggers>
+        <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="#303034"/></Trigger>
+      </Style.Triggers>
+    </Style>
+    <!-- Caixinha de marcar (tabelas) -->
+    <Style x:Key="Marca" TargetType="CheckBox">
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Focusable" Value="False"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="CheckBox">
+            <Border x:Name="cx" Width="18" Height="18" CornerRadius="5" BorderThickness="1.5" BorderBrush="#6E6E73" Background="Transparent">
+              <TextBlock x:Name="v" Text="&#xE73E;" FontFamily="{StaticResource Icones}" FontSize="12" Foreground="White"
+                         HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="cx" Property="BorderBrush" Value="#A1A1A6"/></Trigger>
+              <Trigger Property="IsChecked" Value="True">
+                <Setter TargetName="cx" Property="Background" Value="{StaticResource Acento}"/>
+                <Setter TargetName="cx" Property="BorderBrush" Value="{StaticResource Acento}"/>
+                <Setter TargetName="v" Property="Visibility" Value="Visible"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <!-- Campo de texto -->
+    <Style TargetType="TextBox">
+      <Setter Property="Background" Value="#1C1C1E"/>
+      <Setter Property="Foreground" Value="{StaticResource Texto}"/>
+      <Setter Property="BorderBrush" Value="{StaticResource Linha}"/>
+      <Setter Property="CaretBrush" Value="White"/>
+      <Setter Property="SelectionBrush" Value="{StaticResource Acento}"/>
+      <Setter Property="Padding" Value="8,6"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="TextBox">
+            <Border x:Name="bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="7">
+              <ScrollViewer x:Name="PART_ContentHost" Padding="{TemplateBinding Padding}" Focusable="False"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource Acento}"/></Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <!-- Barras de rolagem finas -->
+    <Style x:Key="Polegar" TargetType="Thumb">
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Thumb">
+            <Border CornerRadius="4" Background="#56565B" Margin="2"/>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <Style TargetType="ScrollBar">
+      <Setter Property="Width" Value="10"/>
+      <Setter Property="MinWidth" Value="10"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="ScrollBar">
+            <Track x:Name="PART_Track" IsDirectionReversed="True">
+              <Track.Thumb><Thumb Style="{StaticResource Polegar}"/></Track.Thumb>
+            </Track>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+      <Style.Triggers>
+        <Trigger Property="Orientation" Value="Horizontal">
+          <Setter Property="Width" Value="Auto"/>
+          <Setter Property="MinWidth" Value="0"/>
+          <Setter Property="Height" Value="10"/>
+          <Setter Property="MinHeight" Value="10"/>
+          <Setter Property="Template">
+            <Setter.Value>
+              <ControlTemplate TargetType="ScrollBar">
+                <Track x:Name="PART_Track" IsDirectionReversed="False">
+                  <Track.Thumb><Thumb Style="{StaticResource Polegar}"/></Track.Thumb>
+                </Track>
+              </ControlTemplate>
+            </Setter.Value>
+          </Setter>
+        </Trigger>
+      </Style.Triggers>
+    </Style>
+
+    <Style TargetType="ToolTip">
+      <Setter Property="Background" Value="#2C2C2F"/>
+      <Setter Property="Foreground" Value="{StaticResource Texto}"/>
+      <Setter Property="BorderBrush" Value="{StaticResource Linha}"/>
+      <Setter Property="Padding" Value="8,5"/>
+    </Style>
+
+    <Style TargetType="ProgressBar">
+      <Setter Property="Foreground" Value="{StaticResource Acento}"/>
+      <Setter Property="Background" Value="#38383B"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Height" Value="4"/>
+    </Style>
+
+    <!-- Tabelas -->
+    <Style TargetType="DataGrid">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Foreground" Value="{StaticResource Texto}"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="RowBackground" Value="Transparent"/>
+      <Setter Property="AlternatingRowBackground" Value="Transparent"/>
+      <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+      <Setter Property="HorizontalGridLinesBrush" Value="#343437"/>
+      <Setter Property="HeadersVisibility" Value="Column"/>
+      <Setter Property="RowHeaderWidth" Value="0"/>
+      <Setter Property="AutoGenerateColumns" Value="False"/>
+      <Setter Property="IsReadOnly" Value="True"/>
+      <Setter Property="CanUserAddRows" Value="False"/>
+      <Setter Property="CanUserResizeRows" Value="False"/>
+      <Setter Property="SelectionMode" Value="Single"/>
+      <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+      <Setter Property="VirtualizingPanel.ScrollUnit" Value="Pixel"/>
+    </Style>
+    <Style TargetType="DataGridColumnHeader">
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="DataGridColumnHeader">
+            <Border BorderBrush="{StaticResource Linha}" BorderThickness="0,0,0,1" Padding="10,0,6,8">
+              <ContentPresenter/>
+            </Border>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+      <Setter Property="Foreground" Value="{StaticResource Texto2}"/>
+      <Setter Property="FontSize" Value="12"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+    </Style>
+    <Style TargetType="DataGridRow">
+      <Setter Property="Background" Value="Transparent"/>
+      <Style.Triggers>
+        <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="#323236"/></Trigger>
+        <Trigger Property="IsSelected" Value="True"><Setter Property="Background" Value="#1A3D66"/></Trigger>
+      </Style.Triggers>
+    </Style>
+    <Style TargetType="DataGridCell">
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="DataGridCell">
+            <Border Background="Transparent" Padding="10,9,6,9">
+              <ContentPresenter VerticalAlignment="Top"/>
+            </Border>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+      <Setter Property="Foreground" Value="{StaticResource Texto}"/>
+    </Style>
+
+    <!-- Célula de status (pílula colorida) -->
+    <DataTemplate x:Key="CelStatus">
+      <Border x:Name="pilula" CornerRadius="9" Padding="9,2" HorizontalAlignment="Left" Background="#3A3A3D">
+        <TextBlock x:Name="txt" Text="{Binding Status}" FontSize="12" FontWeight="SemiBold" Foreground="#9A9AA0"/>
+      </Border>
+      <DataTemplate.Triggers>
+        <DataTrigger Binding="{Binding Status}" Value="Critico">
+          <Setter TargetName="pilula" Property="Background" Value="#3DFF453A"/>
+          <Setter TargetName="txt" Property="Foreground" Value="#FF6961"/>
+          <Setter TargetName="txt" Property="Text" Value="Crítico"/>
+        </DataTrigger>
+        <DataTrigger Binding="{Binding Status}" Value="Atencao">
+          <Setter TargetName="pilula" Property="Background" Value="#3DFF9F0A"/>
+          <Setter TargetName="txt" Property="Foreground" Value="#FFB340"/>
+          <Setter TargetName="txt" Property="Text" Value="Atenção"/>
+        </DataTrigger>
+        <DataTrigger Binding="{Binding Status}" Value="OK">
+          <Setter TargetName="pilula" Property="Background" Value="#3330D158"/>
+          <Setter TargetName="txt" Property="Foreground" Value="#30D158"/>
+        </DataTrigger>
+        <DataTrigger Binding="{Binding Status}" Value="Info">
+          <Setter TargetName="pilula" Property="Background" Value="#330A84FF"/>
+          <Setter TargetName="txt" Property="Foreground" Value="#64B5FF"/>
+        </DataTrigger>
+      </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CelItem">
+      <TextBlock Text="{Binding Item}" TextWrapping="Wrap" FontWeight="SemiBold"/>
+    </DataTemplate>
+
+    <!-- Detalhe + recomendação -->
+    <DataTemplate x:Key="CelDetalhe">
+      <StackPanel>
+        <TextBlock Text="{Binding Detalhe}" TextWrapping="Wrap"/>
+        <TextBlock x:Name="rec" Text="{Binding Recomendacao}" TextWrapping="Wrap" Foreground="#9A9AA0" FontSize="13" Margin="0,4,0,0"/>
+      </StackPanel>
+      <DataTemplate.Triggers>
+        <DataTrigger Binding="{Binding Recomendacao}" Value=""><Setter TargetName="rec" Property="Visibility" Value="Collapsed"/></DataTrigger>
+        <DataTrigger Binding="{Binding Recomendacao}" Value="{x:Null}"><Setter TargetName="rec" Property="Visibility" Value="Collapsed"/></DataTrigger>
+      </DataTemplate.Triggers>
+    </DataTemplate>
+  </Window.Resources>
+
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="230"/>
+      <ColumnDefinition Width="*"/>
+    </Grid.ColumnDefinitions>
+
+    <!-- ═══ Barra lateral ═══ -->
+    <Border Grid.Column="0" Background="{StaticResource Lateral}" BorderBrush="#2F2F33" BorderThickness="0,0,1,0">
+      <DockPanel Margin="14,20,14,16">
+        <StackPanel DockPanel.Dock="Top" Margin="8,0,8,22">
+          <TextBlock Text="K-Bench" FontSize="24" FontWeight="Bold" FontFamily="Segoe UI Variable Display, Segoe UI"/>
+          <TextBlock Name="TxtMaquina" Foreground="{StaticResource Texto2}" FontSize="13" TextWrapping="Wrap" Margin="0,4,0,0"/>
+        </StackPanel>
+        <StackPanel DockPanel.Dock="Bottom">
+          <Button Name="BtnPastaLogs" Style="{StaticResource BtnSec}" Padding="10,6" HorizontalAlignment="Stretch">
+            <StackPanel Orientation="Horizontal">
+              <TextBlock Text="&#xE8B7;" FontFamily="{StaticResource Icones}" Margin="0,0,8,0" VerticalAlignment="Center"/>
+              <TextBlock Text="Pasta de logs"/>
+            </StackPanel>
+          </Button>
+          <TextBlock Name="TxtVersao" Foreground="{StaticResource Texto3}" FontSize="12" Margin="4,10,0,0"/>
+        </StackPanel>
+        <StackPanel>
+          <TextBlock Text="Ferramentas" Style="{StaticResource Secao}"/>
+          <RadioButton Name="NavDiagnostico" Style="{StaticResource Nav}" Tag="&#xE9D9;" Content="Diagnóstico" IsChecked="True"/>
+          <RadioButton Name="NavManutencao" Style="{StaticResource Nav}" Tag="&#xE90F;" Content="Manutenção"/>
+          <RadioButton Name="NavReparos" Style="{StaticResource Nav}" Tag="&#xE15E;" Content="Reparos"/>
+          <RadioButton Name="NavTweaks" Style="{StaticResource Nav}" Tag="&#xE9E9;" Content="Otimizar"/>
+          <RadioButton Name="NavProgramas" Style="{StaticResource Nav}" Tag="&#xE7B8;" Content="Programas"/>
+          <RadioButton Name="NavDesinstalar" Style="{StaticResource Nav}" Tag="&#xE74D;" Content="Desinstalar"/>
+          <RadioButton Name="NavDrivers" Style="{StaticResource Nav}" Tag="&#xE950;" Content="Drivers"/>
+          <RadioButton Name="NavImpressoras" Style="{StaticResource Nav}" Tag="&#xE749;" Content="Impressoras"/>
+          <RadioButton Name="NavPerfis" Style="{StaticResource Nav}" Tag="&#xE77B;" Content="Perfis"/>
+          <RadioButton Name="NavBateria" Style="{StaticResource Nav}" Tag="&#xE83F;" Content="Bateria e energia"/>
+        </StackPanel>
+      </DockPanel>
+    </Border>
+
+    <!-- ═══ Conteúdo ═══ -->
+    <Grid Grid.Column="1">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="*" MinHeight="300"/>
+        <RowDefinition Height="8"/>
+        <RowDefinition Height="150" MinHeight="44"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+
+      <!-- Diagnóstico -->
+      <Grid Name="PgDiagnostico" Margin="32,26,32,8">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <DockPanel Margin="0,0,0,18">
+          <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Top">
+            <Button Name="BtnRelatorio" Content="Abrir relatório" Style="{StaticResource BtnSec}" Margin="0,0,8,0" IsEnabled="False"/>
+            <Button Name="BtnDiagnostico" Content="Rodar diagnóstico"/>
+          </StackPanel>
+          <StackPanel>
+            <TextBlock Text="Diagnóstico" Style="{StaticResource TituloPagina}" Foreground="#F5F5F7"/>
+            <TextBlock Text="Descobre por que o PC está lento ou instável. Não altera nada." Style="{StaticResource SubPagina}"/>
+          </StackPanel>
+        </DockPanel>
+        <UniformGrid Grid.Row="1" Rows="1" Margin="0,0,0,14">
+          <Border Style="{StaticResource Cartao}" Padding="16,12" Margin="0,0,10,0">
+            <StackPanel><TextBlock Name="TxtNumCrit" Text="–" FontSize="28" FontWeight="SemiBold" Foreground="{StaticResource Vermelho}"/><TextBlock Text="Crítico" Foreground="{StaticResource Texto2}"/></StackPanel>
+          </Border>
+          <Border Style="{StaticResource Cartao}" Padding="16,12" Margin="5,0,5,0">
+            <StackPanel><TextBlock Name="TxtNumAten" Text="–" FontSize="28" FontWeight="SemiBold" Foreground="{StaticResource Laranja}"/><TextBlock Text="Atenção" Foreground="{StaticResource Texto2}"/></StackPanel>
+          </Border>
+          <Border Style="{StaticResource Cartao}" Padding="16,12" Margin="10,0,0,0">
+            <StackPanel><TextBlock Name="TxtNumOk" Text="–" FontSize="28" FontWeight="SemiBold" Foreground="{StaticResource Verde}"/><TextBlock Text="OK" Foreground="{StaticResource Texto2}"/></StackPanel>
+          </Border>
+        </UniformGrid>
+        <Border Grid.Row="2" Style="{StaticResource Cartao}" Padding="6,12,6,4">
+          <DataGrid Name="DgAchados">
+            <DataGrid.Columns>
+              <DataGridTemplateColumn Header="STATUS" Width="92" CellTemplate="{StaticResource CelStatus}"/>
+              <DataGridTextColumn Header="CATEGORIA" Binding="{Binding Categoria}" Width="125"/>
+              <DataGridTemplateColumn Header="ITEM" Width="190" CellTemplate="{StaticResource CelItem}"/>
+              <DataGridTemplateColumn Header="DETALHE" Width="*" CellTemplate="{StaticResource CelDetalhe}"/>
+            </DataGrid.Columns>
+          </DataGrid>
+        </Border>
+      </Grid>
+
+      <!-- Manutenção -->
+      <Grid Name="PgManutencao" Margin="32,26,32,8" Visibility="Collapsed">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <DockPanel Margin="0,0,0,18">
+          <Button Name="BtnManutencao" DockPanel.Dock="Right" VerticalAlignment="Top" Content="Executar manutenção"/>
+          <StackPanel>
+            <TextBlock Text="Manutenção" Style="{StaticResource TituloPagina}" Foreground="#F5F5F7"/>
+            <TextBlock Text="Limpeza, otimização e reparo dos arquivos do Windows." Style="{StaticResource SubPagina}"/>
+          </StackPanel>
+        </DockPanel>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="20"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0">
+              <TextBlock Text="MODO" Style="{StaticResource Secao}"/>
+              <Border Background="{StaticResource FundoCartao}" CornerRadius="9" Padding="3" HorizontalAlignment="Left" Margin="0,0,0,18">
+                <StackPanel Orientation="Horizontal">
+                  <RadioButton Name="RbRapida" Style="{StaticResource Segmento}" GroupName="Modo" Content="Rápida" IsChecked="True"/>
+                  <RadioButton Name="RbCompleta" Style="{StaticResource Segmento}" GroupName="Modo" Content="Completa"/>
+                </StackPanel>
+              </Border>
+              <TextBlock Text="ETAPAS" Style="{StaticResource Secao}"/>
+              <Border Style="{StaticResource Cartao}" Padding="16,4">
+                <StackPanel Name="PnlEtapas"/>
+              </Border>
+            </StackPanel>
+            <StackPanel Grid.Column="2">
+              <TextBlock Text="OPÇÕES" Style="{StaticResource Secao}"/>
+              <Border Style="{StaticResource Cartao}" Padding="16,12" Margin="0,0,0,18">
+                <CheckBox Name="ChkAgendarDisco">
+                  <StackPanel>
+                    <TextBlock Text="Corrigir disco se encontrar erro"/>
+                    <TextBlock Text="Correção pontual na hora ou reparo completo no próximo boot." Foreground="{StaticResource Texto2}" FontSize="13" TextWrapping="Wrap" Margin="0,2,0,0"/>
+                  </StackPanel>
+                </CheckBox>
+              </Border>
+              <TextBlock Text="FONTE DO DISM (OPCIONAL)" Style="{StaticResource Secao}"/>
+              <Border Style="{StaticResource Cartao}" Padding="16,14">
+                <StackPanel>
+                  <DockPanel>
+                    <Button Name="BtnFonte" DockPanel.Dock="Right" Content="Procurar…" Style="{StaticResource BtnSec}" Padding="12,6" Margin="8,0,0,0"/>
+                    <TextBox Name="TxtFonte"/>
+                  </DockPanel>
+                  <TextBlock TextWrapping="Wrap" Foreground="{StaticResource Texto2}" FontSize="13" Margin="2,8,0,0"
+                             Text="ISO, pendrive ou install.wim da mesma versão do Windows. Use quando o DISM falhar pelo Windows Update (0x800f081f)."/>
+                </StackPanel>
+              </Border>
+            </StackPanel>
+          </Grid>
+        </ScrollViewer>
+      </Grid>
+
+      <!-- Reparos -->
+      <Grid Name="PgReparos" Margin="32,26,32,8" Visibility="Collapsed">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <DockPanel Margin="0,0,0,18">
+          <Button Name="BtnReparos" DockPanel.Dock="Right" VerticalAlignment="Top" Content="Executar selecionados"/>
+          <StackPanel>
+            <TextBlock Text="Reparos" Style="{StaticResource TituloPagina}" Foreground="#F5F5F7"/>
+            <TextBlock Text="Correções direcionadas. Ative só o que resolve o problema do momento." Style="{StaticResource SubPagina}"/>
+          </StackPanel>
+        </DockPanel>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+          <Border Style="{StaticResource Cartao}" Padding="16,4" VerticalAlignment="Top">
+            <StackPanel Name="PnlReparos"/>
+          </Border>
+        </ScrollViewer>
+      </Grid>
+
+      <!-- Otimizar (debloat + ajustes) -->
+      <Grid Name="PgTweaks" Margin="32,26,32,8" Visibility="Collapsed">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <DockPanel Margin="0,0,0,16">
+          <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Top">
+            <Button Name="BtnTweaksVerificar" Content="Verificar" Style="{StaticResource BtnSec}" Margin="0,0,8,0"/>
+            <Button Name="BtnTweaksAplicar" Content="Aplicar alterações"/>
+          </StackPanel>
+          <StackPanel>
+            <TextBlock Text="Otimizar" Style="{StaticResource TituloPagina}" Foreground="#F5F5F7"/>
+            <TextBlock Name="TxtResumoTweaks" Text="Debloat e ajustes do Windows, cada um com desfazer." Style="{StaticResource SubPagina}"/>
+          </StackPanel>
+        </DockPanel>
+        <DockPanel Grid.Row="1" Margin="0,0,0,14" LastChildFill="False">
+          <Border DockPanel.Dock="Left" Background="{StaticResource FundoCartao}" CornerRadius="9" Padding="3">
+            <StackPanel Orientation="Horizontal">
+              <RadioButton Name="RbNivelSeguro" Style="{StaticResource Segmento}" GroupName="NivelTweak" Content="Seguro"
+                           ToolTip="Pode ir em qualquer PC de cliente"/>
+              <RadioButton Name="RbNivelRecomendado" Style="{StaticResource Segmento}" GroupName="NivelTweak" Content="Recomendado"
+                           ToolTip="Padrão de formatação"/>
+              <RadioButton Name="RbNivelAgressivo" Style="{StaticResource Segmento}" GroupName="NivelTweak" Content="Agressivo"
+                           ToolTip="Tira coisas que alguém pode usar"/>
+            </StackPanel>
+          </Border>
+          <CheckBox Name="ChkContasNovas" DockPanel.Dock="Right" IsChecked="True" VerticalAlignment="Center"
+                    ToolTip="Grava os ajustes de usuário também no perfil padrão: contas criadas depois já nascem assim.">
+            <TextBlock Text="Também em contas novas" Foreground="{StaticResource Texto2}"/>
+          </CheckBox>
+        </DockPanel>
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+          <StackPanel Name="PnlTweaks">
+            <TextBlock Text="Verificando o que já está aplicado…" Foreground="{StaticResource Texto2}" Margin="0,8"/>
+          </StackPanel>
+        </ScrollViewer>
+      </Grid>
+
+      <!-- Programas e runtimes -->
+      <Grid Name="PgProgramas" Margin="32,26,32,8" Visibility="Collapsed">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <DockPanel Margin="0,0,0,16">
+          <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Top">
+            <Button Name="BtnProgVerificar" Content="Verificar" Style="{StaticResource BtnSec}" Margin="0,0,8,0"/>
+            <Button Name="BtnProgAtualizar" Content="Atualizar todos" Style="{StaticResource BtnSec}" Margin="0,0,8,0"
+                    ToolTip="winget upgrade --all: atualiza tudo que o winget reconhece, não só o que está nesta lista."/>
+            <Button Name="BtnProgAplicar" Content="Instalar selecionados"/>
+          </StackPanel>
+          <StackPanel>
+            <TextBlock Text="Programas" Style="{StaticResource TituloPagina}" Foreground="#F5F5F7"/>
+            <TextBlock Name="TxtResumoProgramas" Text="Marque o que instalar. Tudo de fonte oficial (winget, Microsoft Store, CDN do Office)." Style="{StaticResource SubPagina}"/>
+          </StackPanel>
+        </DockPanel>
+        <DockPanel Grid.Row="1" Margin="0,0,0,14" LastChildFill="False">
+          <Border DockPanel.Dock="Left" Background="{StaticResource FundoCartao}" CornerRadius="9" Padding="3">
+            <StackPanel Orientation="Horizontal">
+              <RadioButton Name="RbPresetBasico" Style="{StaticResource Segmento}" GroupName="PresetProg" Content="Básico" Tag="Basico"
+                           ToolTip="PC de cliente: navegador, PDF, 7-Zip, VLC, AnyDesk e runtimes"/>
+              <RadioButton Name="RbPresetMC" Style="{StaticResource Segmento}" GroupName="PresetProg" Content="MC Serviços" Tag="MC"
+                           ToolTip="Loja: Chrome, Google Drive, Affinity, WhatsApp e runtimes"/>
+              <RadioButton Name="RbPresetTecnico" Style="{StaticResource Segmento}" GroupName="PresetProg" Content="Técnico" Tag="Tecnico"
+                           ToolTip="Bancada: CrystalDiskInfo, HWiNFO, CPU-Z, Rufus, Everything..."/>
+              <RadioButton Name="RbPresetDev" Style="{StaticResource Segmento}" GroupName="PresetProg" Content="Dev" Tag="Dev"
+                           ToolTip="Git, VS Code, Python, Node, JDK 21 e PowerShell 7, já configurados"/>
+              <RadioButton Name="RbPresetRuntimes" Style="{StaticResource Segmento}" GroupName="PresetProg" Content="Runtimes" Tag="Runtimes"
+                           ToolTip="Visual C++, .NET, DirectX: o que os All-in-One instalam"/>
+            </StackPanel>
+          </Border>
+          <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center" Margin="12,0,0,0">
+            <Button Name="BtnProgMarcar" Content="Marcar tudo" Style="{StaticResource BtnMini}" Margin="0,0,6,0"
+                    ToolTip="Marca tudo o que está aparecendo (respeita o filtro) e ainda não está instalado"/>
+            <Button Name="BtnProgDesmarcar" Content="Desmarcar tudo" Style="{StaticResource BtnMini}" Margin="0"/>
+          </StackPanel>
+          <Grid DockPanel.Dock="Right" Width="200" VerticalAlignment="Center">
+            <TextBox Name="TxtBuscaProg"/>
+            <TextBlock Name="TxtBuscaDica" Text="Filtrar…" Foreground="{StaticResource Texto3}" IsHitTestVisible="False"
+                       VerticalAlignment="Center" Margin="11,0,0,0"/>
+          </Grid>
+        </DockPanel>
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+          <StackPanel Name="PnlProgramas">
+            <TextBlock Text="Verificando o que já está instalado…" Foreground="{StaticResource Texto2}" Margin="0,8"/>
+          </StackPanel>
+        </ScrollViewer>
+      </Grid>
+
+      <!-- Desinstalador completo -->
+      <Grid Name="PgDesinstalar" Margin="32,26,32,8" Visibility="Collapsed">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <DockPanel Margin="0,0,0,16">
+          <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Top">
+            <Button Name="BtnDesAtualizar" Content="Atualizar lista" Style="{StaticResource BtnSec}" Margin="0,0,8,0"/>
+            <Button Name="BtnDesinstalar" Content="Desinstalar"/>
+          </StackPanel>
+          <StackPanel>
+            <TextBlock Text="Desinstalar" Style="{StaticResource TituloPagina}" Foreground="#F5F5F7"/>
+            <TextBlock Name="TxtResumoDes" Text="Roda o desinstalador e depois caça os rastros: pastas, registro, atalhos, serviços e tarefas." Style="{StaticResource SubPagina}"/>
+          </StackPanel>
+        </DockPanel>
+        <DockPanel Grid.Row="1" Margin="0,0,0,14" LastChildFill="False">
+          <CheckBox Name="ChkDesSilencioso" DockPanel.Dock="Left" IsChecked="True" VerticalAlignment="Center"
+                    ToolTip="Usa o modo silencioso do instalador quando ele tem (MSI, Inno, NSIS). Sem isso, o desinstalador abre as telas dele.">
+            <TextBlock Text="Desinstalar em silêncio quando der" Foreground="{StaticResource Texto2}"/>
+          </CheckBox>
+          <Grid DockPanel.Dock="Right" Width="240" VerticalAlignment="Center">
+            <TextBox Name="TxtBuscaDes"/>
+            <TextBlock Name="TxtBuscaDesDica" Text="Filtrar por nome ou fabricante…" Foreground="{StaticResource Texto3}" IsHitTestVisible="False"
+                       VerticalAlignment="Center" Margin="11,0,0,0"/>
+          </Grid>
+        </DockPanel>
+        <Border Name="BrdApps" Grid.Row="2" Style="{StaticResource Cartao}" Padding="6,12,6,4">
+          <DataGrid Name="DgApps" SelectionMode="Extended">
+            <DataGrid.Columns>
+              <DataGridTemplateColumn Width="40">
+                <DataGridTemplateColumn.CellTemplate>
+                  <DataTemplate>
+                    <CheckBox Style="{StaticResource Marca}" Margin="0,3,0,0"
+                              IsChecked="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=DataGridRow}, Mode=TwoWay}"/>
+                  </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+              </DataGridTemplateColumn>
+              <DataGridTemplateColumn Header="PROGRAMA" Width="*">
+                <DataGridTemplateColumn.CellTemplate>
+                  <DataTemplate>
+                    <StackPanel>
+                      <TextBlock Text="{Binding Nome}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                      <TextBlock Text="{Binding Editor}" Foreground="#9A9AA0" FontSize="13" TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+                  </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+              </DataGridTemplateColumn>
+              <DataGridTextColumn Header="VERSÃO" Binding="{Binding Versao}" Width="110"/>
+              <DataGridTextColumn Header="TAMANHO" Binding="{Binding Tamanho}" Width="80"/>
+              <DataGridTextColumn Header="INSTALADO EM" Binding="{Binding Data}" Width="100"/>
+              <DataGridTextColumn Header="ORIGEM" Binding="{Binding Escopo}" Width="125"/>
+            </DataGrid.Columns>
+          </DataGrid>
+        </Border>
+        <DockPanel Name="PnlRastrosPagina" Grid.Row="2" Visibility="Collapsed">
+          <DockPanel DockPanel.Dock="Top" Margin="0,0,0,12">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Top">
+              <Button Name="BtnRastrosManter" Content="Manter tudo" Style="{StaticResource BtnSec}" Margin="0,0,8,0"/>
+              <Button Name="BtnRastrosRemover" Content="Remover selecionados"/>
+            </StackPanel>
+            <StackPanel>
+              <TextBlock Name="TxtRastrosTitulo" FontSize="16.5" FontWeight="SemiBold" Foreground="{StaticResource Texto}"/>
+              <TextBlock Name="TxtRastrosSub" Foreground="{StaticResource Texto2}" TextWrapping="Wrap" Margin="0,3,0,0"
+                         Text="Marcados = rastros certos. Os de revisar costumam ser dados do usuário (perfis, configurações). Arquivos vão pra Lixeira; registro e tarefas ganham backup."/>
+            </StackPanel>
+          </DockPanel>
+          <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <Border Style="{StaticResource Cartao}" Padding="16,4">
+              <StackPanel Name="PnlRastros"/>
+            </Border>
+          </ScrollViewer>
+        </DockPanel>
+      </Grid>
+
+      <!-- Drivers -->
+      <Grid Name="PgDrivers" Margin="32,26,32,8" Visibility="Collapsed">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <DockPanel Margin="0,0,0,16">
+          <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Top">
+            <Button Name="BtnDrvProcurar" Content="Procurar atualizações" Style="{StaticResource BtnSec}" Margin="0,0,8,0"/>
+            <Button Name="BtnDrvInstalar" Content="Atualizar selecionados"/>
+          </StackPanel>
+          <StackPanel>
+            <TextBlock Text="Drivers" Style="{StaticResource TituloPagina}" Foreground="#F5F5F7"/>
+            <TextBlock Name="TxtResumoDrv" Text="Só fonte oficial: Windows Update, NVIDIA e o fabricante do PC. Ponto de restauração e cópia dos drivers atuais antes de trocar." Style="{StaticResource SubPagina}"/>
+          </StackPanel>
+        </DockPanel>
+        <StackPanel Grid.Row="1" Margin="0,0,0,14">
+          <!-- Fabricante do PC -->
+          <Border Style="{StaticResource Cartao}" Padding="16,12" Margin="0,0,0,12">
+            <DockPanel>
+              <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                <Button Name="BtnDrvFabricante" Content="Ferramenta do fabricante" Style="{StaticResource BtnMini}" Visibility="Collapsed"/>
+                <Button Name="BtnDrvPagina" Content="Página de suporte" Style="{StaticResource BtnMini}"
+                        ToolTip="Abre o site oficial de drivers do fabricante e copia o número de série pra colar na busca"/>
+              </StackPanel>
+              <StackPanel>
+                <TextBlock Name="TxtDrvMaquina" Text="…" FontWeight="SemiBold"/>
+                <TextBlock Name="TxtDrvMaquinaSub" Foreground="{StaticResource Texto2}" FontSize="13" TextWrapping="Wrap" Margin="0,3,0,0"/>
+              </StackPanel>
+            </DockPanel>
+          </Border>
+          <DockPanel LastChildFill="False">
+            <CheckBox Name="ChkDrvTodos" DockPanel.Dock="Left" VerticalAlignment="Center"
+                      ToolTip="Mostra também os dispositivos com driver do próprio Windows que estão em dia">
+              <TextBlock Text="Mostrar todos os dispositivos" Foreground="{StaticResource Texto2}"/>
+            </CheckBox>
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+              <Button Name="BtnDrvBackup" Content="Backup dos drivers" Style="{StaticResource BtnMini}"
+                      ToolTip="Copia os drivers em uso pra uma pasta (pendrive): depois de formatar, é só Restaurar backup"/>
+              <Button Name="BtnDrvRestaurar" Content="Restaurar backup" Style="{StaticResource BtnMini}"/>
+              <Button Name="BtnDrvLimpar" Content="Limpar versões antigas" Style="{StaticResource BtnMini}"
+                      ToolTip="Apaga do repositório do Windows versões velhas de drivers que já foram substituídas e não estão em uso"/>
+            </StackPanel>
+          </DockPanel>
+        </StackPanel>
+        <Border Grid.Row="2" Style="{StaticResource Cartao}" Padding="6,12,6,4">
+          <Grid>
+            <DataGrid Name="DgDrivers" SelectionMode="Extended">
+              <DataGrid.Columns>
+                <DataGridTemplateColumn Width="40">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                      <CheckBox x:Name="cx" Style="{StaticResource Marca}" Margin="0,3,0,0"
+                                IsChecked="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=DataGridRow}, Mode=TwoWay}"/>
+                      <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding Fonte}" Value=""><Setter TargetName="cx" Property="Visibility" Value="Hidden"/></DataTrigger>
+                      </DataTemplate.Triggers>
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="DISPOSITIVO" Width="*">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                      <StackPanel>
+                        <TextBlock Text="{Binding Nome}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Text="{Binding Sub}" Foreground="#9A9AA0" FontSize="13" TextTrimming="CharacterEllipsis"/>
+                      </StackPanel>
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="INSTALADO" Width="155">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate><TextBlock Text="{Binding Instalado}" Foreground="#C7C7CC"/></DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="DISPONÍVEL" Width="215">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate><TextBlock Text="{Binding DisponivelTexto}"/></DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="SITUAÇÃO" Width="120">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                      <Border x:Name="pilula" CornerRadius="9" Padding="9,2" HorizontalAlignment="Left" Background="#3A3A3D">
+                        <TextBlock x:Name="txt" Text="{Binding Situacao}" FontSize="12" FontWeight="SemiBold" Foreground="#9A9AA0"/>
+                      </Border>
+                      <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding Situacao}" Value="">
+                          <Setter TargetName="txt" Property="Text" Value="Não verificado"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Situacao}" Value="Atualização">
+                          <Setter TargetName="pilula" Property="Background" Value="#330A84FF"/>
+                          <Setter TargetName="txt" Property="Foreground" Value="#64B5FF"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Situacao}" Value="Atualizado">
+                          <Setter TargetName="pilula" Property="Background" Value="#3330D158"/>
+                          <Setter TargetName="txt" Property="Foreground" Value="#30D158"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Situacao}" Value="Sem driver">
+                          <Setter TargetName="pilula" Property="Background" Value="#3DFF453A"/>
+                          <Setter TargetName="txt" Property="Foreground" Value="#FF6961"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Situacao}" Value="Com erro">
+                          <Setter TargetName="pilula" Property="Background" Value="#3DFF9F0A"/>
+                          <Setter TargetName="txt" Property="Foreground" Value="#FFB340"/>
+                        </DataTrigger>
+                      </DataTemplate.Triggers>
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+              </DataGrid.Columns>
+            </DataGrid>
+          </Grid>
+        </Border>
+      </Grid>
+
+      <!-- Impressoras -->
+      <Grid Name="PgImpressoras" Margin="32,26,32,8" Visibility="Collapsed">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <DockPanel Margin="0,0,0,16">
+          <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Top">
+            <Button Name="BtnImpProcurar" Content="Procurar na rede" Style="{StaticResource BtnSec}" Margin="0,0,8,0"/>
+            <Button Name="BtnImpAdicionar" Content="Adicionar selecionadas"/>
+          </StackPanel>
+          <StackPanel>
+            <TextBlock Text="Impressoras" Style="{StaticResource TituloPagina}" Foreground="#F5F5F7"/>
+            <TextBlock Name="TxtResumoImp" Text="Acha as impressoras da rede, baixa o driver oficial e configura pelo nome (o IP pode mudar à vontade)." Style="{StaticResource SubPagina}"/>
+          </StackPanel>
+        </DockPanel>
+        <DockPanel Grid.Row="1" Margin="0,0,0,14" LastChildFill="False">
+          <CheckBox Name="ChkImpScanner" DockPanel.Dock="Left" IsChecked="True" VerticalAlignment="Center"
+                    ToolTip="Multifuncionais Epson: instala o Epson Scan 2 junto com a impressora.">
+            <TextBlock Text="Instalar o scanner junto (Epson Scan 2)" Foreground="{StaticResource Texto2}"/>
+          </CheckBox>
+        </DockPanel>
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+          <StackPanel>
+            <TextBlock Text="NA REDE" Style="{StaticResource Secao}"/>
+            <Border Style="{StaticResource Cartao}" Padding="16,4" Margin="0,0,0,18">
+              <StackPanel Name="PnlImpAchadas">
+                <TextBlock Text="Clique em Procurar na rede (leva uns 5 segundos)." Foreground="{StaticResource Texto2}" Margin="0,10"/>
+              </StackPanel>
+            </Border>
+            <TextBlock Text="INSTALADAS NESTE PC" Style="{StaticResource Secao}"/>
+            <Border Style="{StaticResource Cartao}" Padding="16,4" Margin="0,0,0,18">
+              <StackPanel Name="PnlImpInstaladas"/>
+            </Border>
+          </StackPanel>
+        </ScrollViewer>
+      </Grid>
+
+      <!-- Perfis -->
+      <Grid Name="PgPerfis" Margin="32,26,32,8" Visibility="Collapsed">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="200"/>
+          <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <DockPanel Margin="0,0,20,0">
+          <TextBlock DockPanel.Dock="Top" Text="Perfis" Style="{StaticResource TituloPagina}" Foreground="#F5F5F7" Margin="0,0,0,14"/>
+          <StackPanel DockPanel.Dock="Bottom" Margin="0,8,0,0">
+            <Button Name="BtnPerfilNovo" Content="Novo perfil" Style="{StaticResource BtnSec}" HorizontalAlignment="Stretch" Margin="0,0,0,8"/>
+            <Button Name="BtnPerfilImportar" Content="Importar .json" Style="{StaticResource BtnSec}" HorizontalAlignment="Stretch"/>
+          </StackPanel>
+          <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Name="PnlListaPerfis"/>
+          </ScrollViewer>
+        </DockPanel>
+        <Grid Grid.Column="1">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+          </Grid.RowDefinitions>
+          <DockPanel Margin="0,0,0,12">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Top" Margin="12,0,0,0">
+              <Button Name="BtnPerfilSalvar" Content="Salvar" Style="{StaticResource BtnSec}" Margin="0,0,8,0"/>
+              <Button Name="BtnPerfilAplicar" Content="Aplicar neste PC"/>
+            </StackPanel>
+            <StackPanel>
+              <TextBox Name="TxtPerfilNome" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,6"/>
+              <TextBox Name="TxtPerfilDesc" Margin="0,0,0,6"/>
+              <TextBlock Name="TxtPerfilResumo" Foreground="{StaticResource Texto2}"/>
+              <WrapPanel Margin="0,10,0,0">
+                <Button Name="BtnPerfilCapturar" Content="Copiar deste PC" Style="{StaticResource BtnSec}" Margin="0,0,6,6" Padding="10,5"
+                        ToolTip="Marca no perfil o que está aplicado/instalado neste PC agora (ajustes, programas, impressoras)."/>
+                <Button Name="BtnPerfilDuplicar" Content="Duplicar" Style="{StaticResource BtnSec}" Margin="0,0,6,6" Padding="10,5"/>
+                <Button Name="BtnPerfilExportar" Content="Exportar .json" Style="{StaticResource BtnSec}" Margin="0,0,6,6" Padding="10,5"/>
+                <Button Name="BtnPerfilExcluir" Content="Excluir" Style="{StaticResource BtnSec}" Margin="0,0,6,6" Padding="10,5"/>
+              </WrapPanel>
+            </StackPanel>
+          </DockPanel>
+          <DockPanel Grid.Row="1" Margin="0,0,0,14" LastChildFill="False">
+            <Border DockPanel.Dock="Left" Background="{StaticResource FundoCartao}" CornerRadius="9" Padding="3">
+              <StackPanel Orientation="Horizontal">
+                <RadioButton Name="RbPfAjustes" Style="{StaticResource Segmento}" GroupName="SecaoPerfil" Content="Ajustes" IsChecked="True"/>
+                <RadioButton Name="RbPfProgramas" Style="{StaticResource Segmento}" GroupName="SecaoPerfil" Content="Programas"/>
+                <RadioButton Name="RbPfImpressoras" Style="{StaticResource Segmento}" GroupName="SecaoPerfil" Content="Impressoras"/>
+                <RadioButton Name="RbPfGeral" Style="{StaticResource Segmento}" GroupName="SecaoPerfil" Content="Geral"/>
+              </StackPanel>
+            </Border>
+          </DockPanel>
+          <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <Grid>
+              <StackPanel Name="PnlPfAjustes"/>
+              <StackPanel Name="PnlPfProgramas" Visibility="Collapsed"/>
+              <StackPanel Name="PnlPfImpressoras" Visibility="Collapsed"/>
+              <StackPanel Name="PnlPfGeral" Visibility="Collapsed">
+                <TextBlock Text="DRIVERS" Style="{StaticResource Secao}"/>
+                <Border Style="{StaticResource Cartao}" Padding="16,10" Margin="0,0,0,18">
+                  <CheckBox Name="ChkPfDrivers">
+                    <StackPanel>
+                      <TextBlock Text="Atualizar drivers" FontWeight="SemiBold"/>
+                      <TextBlock Text="Instala o que o Windows Update e a NVIDIA tiverem de mais novo pra este PC (bom logo depois de formatar)."
+                                 Foreground="{StaticResource Texto2}" FontSize="13" TextWrapping="Wrap" Margin="0,3,0,0"/>
+                    </StackPanel>
+                  </CheckBox>
+                </Border>
+                <TextBlock Text="MANUTENÇÃO NO FIM" Style="{StaticResource Secao}"/>
+                <Border Background="{StaticResource FundoCartao}" CornerRadius="9" Padding="3" HorizontalAlignment="Left" Margin="0,0,0,18">
+                  <StackPanel Orientation="Horizontal">
+                    <RadioButton Name="RbPfManNenhuma" Style="{StaticResource Segmento}" GroupName="ManPerfil" Content="Nenhuma" Tag="Nenhuma"/>
+                    <RadioButton Name="RbPfManRapida" Style="{StaticResource Segmento}" GroupName="ManPerfil" Content="Rápida" Tag="Rapida"/>
+                    <RadioButton Name="RbPfManCompleta" Style="{StaticResource Segmento}" GroupName="ManPerfil" Content="Completa" Tag="Completa"/>
+                  </StackPanel>
+                </Border>
+                <TextBlock Text="AJUSTES DE USUÁRIO" Style="{StaticResource Secao}"/>
+                <Border Style="{StaticResource Cartao}" Padding="16,10">
+                  <CheckBox Name="ChkPfContasNovas">
+                    <StackPanel>
+                      <TextBlock Text="Também em contas novas" FontWeight="SemiBold"/>
+                      <TextBlock Text="Grava os ajustes de usuário no perfil padrão do Windows: contas criadas depois já nascem assim."
+                                 Foreground="{StaticResource Texto2}" FontSize="13" TextWrapping="Wrap" Margin="0,3,0,0"/>
+                    </StackPanel>
+                  </CheckBox>
+                </Border>
+              </StackPanel>
+            </Grid>
+          </ScrollViewer>
+        </Grid>
+      </Grid>
+
+      <!-- Bateria e energia -->
+      <Grid Name="PgBateria" Margin="32,26,32,8" Visibility="Collapsed">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <DockPanel Margin="0,0,0,18">
+          <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Top">
+            <Button Name="BtnConsumo" Content="Teste de consumo" Style="{StaticResource BtnSec}" Margin="0,0,8,0"
+                    ToolTip="Mede quantos watts o note gasta parado, no YouTube e navegando (6-8 min, na bateria). Siga as instruções no log."/>
+            <Button Name="BtnRelBateria" Content="Relatório do Windows" Style="{StaticResource BtnSec}" Margin="0,0,8,0"/>
+            <Button Name="BtnEnergia" Content="Análise de 60 s" Style="{StaticResource BtnSec}" Margin="0,0,8,0"
+                    ToolTip="powercfg /energy: rastreia o que impede o PC de economizar energia. Deixe parado, de preferência na bateria."/>
+            <Button Name="BtnBateria" Content="Analisar"/>
+          </StackPanel>
+          <StackPanel>
+            <TextBlock Text="Bateria e energia" Style="{StaticResource TituloPagina}" Foreground="#F5F5F7"/>
+            <TextBlock Name="TxtResumoBat" Text="Saúde, consumo real, suspensão, GPU dedicada e plano de energia." Style="{StaticResource SubPagina}"/>
+          </StackPanel>
+        </DockPanel>
+        <Grid Grid.Row="1">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="18"/>
+            <ColumnDefinition Width="2*" MinWidth="300"/>
+          </Grid.ColumnDefinitions>
+          <DockPanel Grid.Column="0">
+            <TextBlock DockPanel.Dock="Top" Text="ACHADOS" Style="{StaticResource Secao}"/>
+            <Border Style="{StaticResource Cartao}" Padding="6,12,6,4">
+              <DataGrid Name="DgBateria">
+                <DataGrid.Columns>
+                  <DataGridTemplateColumn Header="STATUS" Width="92" CellTemplate="{StaticResource CelStatus}"/>
+                  <DataGridTemplateColumn Header="ITEM" Width="160" CellTemplate="{StaticResource CelItem}"/>
+                  <DataGridTemplateColumn Header="DETALHE" Width="*" CellTemplate="{StaticResource CelDetalhe}"/>
+                </DataGrid.Columns>
+              </DataGrid>
+            </Border>
+          </DockPanel>
+          <DockPanel Grid.Column="2">
+            <StackPanel Name="PnlBateriaAcer" DockPanel.Dock="Top" Visibility="Collapsed">
+              <TextBlock Text="CARGA DA BATERIA (ACER)" Style="{StaticResource Secao}"/>
+              <Border Style="{StaticResource Cartao}" Padding="16,8" Margin="0,0,0,14">
+                <StackPanel>
+                  <CheckBox Name="ChkLimite80" Margin="0,4">
+                    <StackPanel>
+                      <TextBlock Text="Limitar carga a 80%" FontWeight="SemiBold"/>
+                      <TextBlock TextWrapping="Wrap" FontSize="13" Foreground="{StaticResource Texto2}" Margin="0,3,0,0"
+                                 Text="Gravado na BIOS, sem NitroSense/Care Center. Protege a bateria se fica muito na tomada; desligue antes de sair pra ter 100%."/>
+                    </StackPanel>
+                  </CheckBox>
+                  <Border BorderBrush="{StaticResource Linha}" BorderThickness="0,1,0,0" Padding="0,10,0,4" Margin="0,8,0,0">
+                    <DockPanel>
+                      <Button Name="BtnCalibrar" DockPanel.Dock="Right" Content="Calibrar" Style="{StaticResource BtnSec}" VerticalAlignment="Center"/>
+                      <StackPanel Margin="0,0,10,0">
+                        <TextBlock Text="Calibração da bateria" FontWeight="SemiBold"/>
+                        <TextBlock Name="TxtCalibracao" TextWrapping="Wrap" FontSize="13" Foreground="{StaticResource Texto2}" Margin="0,3,0,0"
+                                   Text="Corrige a % que cai rápido demais e a previsão de tempo maluca. Na tomada, leva algumas horas."/>
+                      </StackPanel>
+                    </DockPanel>
+                  </Border>
+                </StackPanel>
+              </Border>
+            </StackPanel>
+            <TextBlock DockPanel.Dock="Top" Text="CORREÇÕES" Style="{StaticResource Secao}"/>
+            <Button Name="BtnAplicarEnergia" DockPanel.Dock="Bottom" Content="Aplicar alterações" HorizontalAlignment="Right" Margin="0,12,0,0"/>
+            <TextBlock DockPanel.Dock="Bottom" TextWrapping="Wrap" Foreground="{StaticResource Texto3}" FontSize="12" Margin="6,8,0,0"
+                       Text="Ligado = aplicar. Desligar algo que o K-Bench aplicou desfaz e volta ao valor anterior."/>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+              <Border Style="{StaticResource Cartao}" Padding="16,4" VerticalAlignment="Top">
+                <StackPanel Name="PnlEnergia">
+                  <TextBlock Text="Clique em Analisar pra ver as correções." Foreground="{StaticResource Texto2}" Margin="0,12"/>
+                </StackPanel>
+              </Border>
+            </ScrollViewer>
+          </DockPanel>
+        </Grid>
+      </Grid>
+
+      <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Background="Transparent" Cursor="SizeNS"/>
+
+      <!-- Log -->
+      <Border Grid.Row="2" Margin="32,0,32,0" Background="#161618" CornerRadius="10" BorderBrush="#2C2C2F" BorderThickness="1">
+        <TextBox Name="TxtLog" IsReadOnly="True" FontFamily="Cascadia Mono, Consolas" FontSize="13"
+                 Background="Transparent" Foreground="#C9CBD1" BorderThickness="0" Padding="12,10"
+                 VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
+      </Border>
+
+      <!-- Status -->
+      <DockPanel Grid.Row="3" Margin="34,10,32,14">
+        <ProgressBar Name="PbOcupado" DockPanel.Dock="Right" Width="160" IsIndeterminate="True" Visibility="Collapsed" VerticalAlignment="Center"/>
+        <TextBlock Name="TxtStatus" Text="Pronto" Foreground="{StaticResource Texto2}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+      </DockPanel>
+    </Grid>
+  </Grid>
+</Window>
